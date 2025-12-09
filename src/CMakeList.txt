@@ -1,0 +1,44 @@
+cmake_minimum_required(VERSION 3.16)
+project(Silnik2D_PGK_2)
+
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+set(SRC_FILES
+    src/main.cpp
+    src/Engine.cpp
+)
+
+file(GLOB COMMON_SRC
+    src/common/*.cpp
+)
+
+add_executable(${PROJECT_NAME}
+    ${SRC_FILES}
+    ${COMMON_SRC}
+)
+
+target_include_directories(${PROJECT_NAME}
+    PRIVATE
+        src
+        src/common
+)
+
+
+find_package(SFML 2.5 COMPONENTS graphics window system REQUIRED)
+
+target_link_libraries(${PROJECT_NAME}
+    sfml-graphics
+    sfml-window
+    sfml-system
+)
+
+if (WIN32)
+    add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+        COMMAND ${CMAKE_COMMAND} -E copy_if_different
+            $<TARGET_FILE:sfml-graphics>
+            $<TARGET_FILE:sfml-window>
+            $<TARGET_FILE:sfml-system>
+            $<TARGET_FILE_DIR:${PROJECT_NAME}>
+    )
+endif()
